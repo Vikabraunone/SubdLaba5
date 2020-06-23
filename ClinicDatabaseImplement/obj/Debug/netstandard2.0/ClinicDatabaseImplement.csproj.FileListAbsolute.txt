@@ -1,0 +1,12 @@
+D:\БД\СУБД\Лаба 5\Clinic\ClinicDatabaseImplement\obj\Debug\netstandard2.0\ClinicDatabaseImplement.csprojAssemblyReference.cache
+D:\БД\СУБД\Лаба 5\Clinic\ClinicDatabaseImplement\obj\Debug\netstandard2.0\ClinicDatabaseImplement.csproj.CoreCompileInputs.cache
+D:\БД\СУБД\Лаба 5\Clinic\ClinicDatabaseImplement\obj\Debug\netstandard2.0\ClinicDatabaseImplement.AssemblyInfoInputs.cache
+D:\БД\СУБД\Лаба 5\Clinic\ClinicDatabaseImplement\obj\Debug\netstandard2.0\ClinicDatabaseImplement.AssemblyInfo.cs
+D:\БД\СУБД\Лаба 5\Clinic\ClinicDatabaseImplement\bin\Debug\netstandard2.0\ClinicDatabaseImplement.deps.json
+D:\БД\СУБД\Лаба 5\Clinic\ClinicDatabaseImplement\bin\Debug\netstandard2.0\ClinicDatabaseImplement.dll
+D:\БД\СУБД\Лаба 5\Clinic\ClinicDatabaseImplement\bin\Debug\netstandard2.0\ClinicDatabaseImplement.pdb
+D:\БД\СУБД\Лаба 5\Clinic\ClinicDatabaseImplement\bin\Debug\netstandard2.0\ClinicBisinessLogic.dll
+D:\БД\СУБД\Лаба 5\Clinic\ClinicDatabaseImplement\bin\Debug\netstandard2.0\ClinicBisinessLogic.pdb
+D:\БД\СУБД\Лаба 5\Clinic\ClinicDatabaseImplement\obj\Debug\netstandard2.0\ClinicDatabaseImplement.csproj.CopyComplete
+D:\БД\СУБД\Лаба 5\Clinic\ClinicDatabaseImplement\obj\Debug\netstandard2.0\ClinicDatabaseImplement.dll
+D:\БД\СУБД\Лаба 5\Clinic\ClinicDatabaseImplement\obj\Debug\netstandard2.0\ClinicDatabaseImplement.pdb

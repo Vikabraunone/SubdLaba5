@@ -1,0 +1,9 @@
+D:\БД\СУБД\Лаба 5\Clinic\ClinicBisinessLogic\bin\Debug\netstandard2.0\ClinicBisinessLogic.deps.json
+D:\БД\СУБД\Лаба 5\Clinic\ClinicBisinessLogic\bin\Debug\netstandard2.0\ClinicBisinessLogic.dll
+D:\БД\СУБД\Лаба 5\Clinic\ClinicBisinessLogic\bin\Debug\netstandard2.0\ClinicBisinessLogic.pdb
+D:\БД\СУБД\Лаба 5\Clinic\ClinicBisinessLogic\obj\Debug\netstandard2.0\ClinicBisinessLogic.csprojAssemblyReference.cache
+D:\БД\СУБД\Лаба 5\Clinic\ClinicBisinessLogic\obj\Debug\netstandard2.0\ClinicBisinessLogic.csproj.CoreCompileInputs.cache
+D:\БД\СУБД\Лаба 5\Clinic\ClinicBisinessLogic\obj\Debug\netstandard2.0\ClinicBisinessLogic.AssemblyInfoInputs.cache
+D:\БД\СУБД\Лаба 5\Clinic\ClinicBisinessLogic\obj\Debug\netstandard2.0\ClinicBisinessLogic.AssemblyInfo.cs
+D:\БД\СУБД\Лаба 5\Clinic\ClinicBisinessLogic\obj\Debug\netstandard2.0\ClinicBisinessLogic.dll
+D:\БД\СУБД\Лаба 5\Clinic\ClinicBisinessLogic\obj\Debug\netstandard2.0\ClinicBisinessLogic.pdb
