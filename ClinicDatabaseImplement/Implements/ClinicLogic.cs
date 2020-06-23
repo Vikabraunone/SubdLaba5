@@ -1,6 +1,7 @@
 ﻿using ClinicBisinessLogic.BindingModels;
 using ClinicBisinessLogic.Interfaces;
 using ClinicBisinessLogic.ViewModels;
+using ClinicDatabaseImplement.Models;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -137,9 +138,9 @@ namespace ClinicDatabaseImplement.Implements
             return list;
         }
 
-        public List<ClinicBindingModel> ReadAllId()
+        public List<Clinic> ReadAllId()
         {
-            List<ClinicBindingModel> list = new List<ClinicBindingModel>();
+            List<Clinic> list = new List<Clinic>();
             using (var conn = new NpgsqlConnection(connStr))
             {
                 conn.Open();
@@ -147,7 +148,7 @@ namespace ClinicDatabaseImplement.Implements
                 {
                     var reader = command.ExecuteReader();
                     while (reader.Read())
-                        list.Add(new ClinicBindingModel
+                        list.Add(new Clinic
                         {
                             Id = reader.GetInt32(0)
                         });

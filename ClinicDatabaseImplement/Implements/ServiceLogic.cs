@@ -200,9 +200,9 @@ namespace ClinicDatabaseImplement.Implements
             return result;
         }
 
-        public List<ServiceBindingModel> ReadAllId()
+        public List<Service> ReadAllId()
         {
-            List<ServiceBindingModel> result = new List<ServiceBindingModel>();
+            List<Service> result = new List<Service>();
             using (var conn = new NpgsqlConnection(connStr))
             {
                 conn.Open();
@@ -210,7 +210,7 @@ namespace ClinicDatabaseImplement.Implements
                 {
                     var reader = command.ExecuteReader();
                     while (reader.Read())
-                        result.Add(new ServiceBindingModel
+                        result.Add(new Service
                         {
                             Id = reader.GetInt32(0)
                         });

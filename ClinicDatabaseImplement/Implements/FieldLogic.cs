@@ -181,9 +181,9 @@ namespace ClinicDatabaseImplement.Implements
             }
         }
 
-        public List<FieldBindingModel> ReadAllId()
+        public List<Field> ReadAllId()
         {
-            List<FieldBindingModel> result = new List<FieldBindingModel>();
+            List<Field> result = new List<Field>();
             using (var conn = new NpgsqlConnection(connStr))
             {
                 conn.Open();
@@ -191,7 +191,7 @@ namespace ClinicDatabaseImplement.Implements
                 {
                     var reader = command.ExecuteReader();
                     while (reader.Read())
-                        result.Add(new FieldBindingModel
+                        result.Add(new Field
                         {
                             Id = reader.GetInt32(0)
                         });

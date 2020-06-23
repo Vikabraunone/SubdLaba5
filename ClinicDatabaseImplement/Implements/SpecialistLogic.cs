@@ -266,9 +266,9 @@ namespace ClinicDatabaseImplement.Implements
             return list;
         }
 
-        public List<SpecialistBindingModel> ReadAllId()
+        public List<Specialist> ReadAllId()
         {
-            List<SpecialistBindingModel> list = new List<SpecialistBindingModel>();
+            List<Specialist> list = new List<Specialist>();
             using (var conn = new NpgsqlConnection(connStr))
             {
                 conn.Open();
@@ -276,7 +276,7 @@ namespace ClinicDatabaseImplement.Implements
                 {
                     var reader = command.ExecuteReader();
                     while (reader.Read())
-                        list.Add(new SpecialistBindingModel
+                        list.Add(new Specialist
                         {
                             Id = reader.GetInt32(0)
                         });
