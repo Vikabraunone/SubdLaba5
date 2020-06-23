@@ -74,6 +74,7 @@
             this.Controls.Add(this.buttonAdd);
             this.Controls.Add(this.dataGridView);
             this.Name = "FormContacts";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Телефоны клиники";
             this.Load += new System.EventHandler(this.FormContacts_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();

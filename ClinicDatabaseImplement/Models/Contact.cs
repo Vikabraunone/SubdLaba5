@@ -2,7 +2,7 @@
 {
     public class Contact
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         public int ClinicId { get; set; }
 

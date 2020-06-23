@@ -5,7 +5,7 @@
     /// </summary>
     public class Service
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         public int FieldId { get; set; }
 

@@ -35,7 +35,7 @@ namespace ClinicDatabaseImplement.Implements
                             throw new Exception("Клиника с таким названием существует");
                     }
                 }
-                int maxId = ReadAllId().Max(x => x.Id) + 1;
+                int maxId = ReadAllId().Max(x => x.Id.Value) + 1;
                 using (var conn = new NpgsqlConnection(connStr))
                 {
                     conn.Open();

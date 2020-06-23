@@ -2,7 +2,7 @@
 {
     public class Specialist
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         public string Lastname { get; set; }
 

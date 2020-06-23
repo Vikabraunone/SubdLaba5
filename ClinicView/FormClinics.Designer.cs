@@ -101,7 +101,7 @@
             this.Controls.Add(this.dataGridView);
             this.Name = "FormClinics";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Клиники";
+            this.Text = "Редактор клиник";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormClinics_FormClosing);
             this.Load += new System.EventHandler(this.FormClinics_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
