@@ -7,7 +7,7 @@ namespace ClinicDatabaseImplement
     {
         private static ClinicDatabase instance;
 
-        private static string connectionString;
+        public NpgsqlConnection npgsqlConnection;
 
         public static ClinicDatabase GetInstance()
         {
@@ -16,15 +16,20 @@ namespace ClinicDatabaseImplement
             return instance;
         }
 
-        public void ConnectToDatabase(string host, string port, string user, string password, string database)
+        public static void OpenСonnection(string host, string port, string password, string database)
         {
-            connectionString = "Server=localhost;Port=5432;Password=;Database=clinic_db;";
+            instance = GetInstance();
+            instance.Open(host, port, password, database);
+        }
+
+        public void Open(string host, string port, string password, string database)
+        {
+            //Server=localhost;Port=5432;Password=;Database=clinic_db;
+            var connectionString = $"Server={host};Port={port};Password={password};Database={database};";
             try
             {
-                using (var conn = new NpgsqlConnection(connectionString))
-                {
-                    conn.Open();
-                }
+                npgsqlConnection = new NpgsqlConnection(connectionString);
+                npgsqlConnection.Open();
             }
             catch (Exception)
             {
@@ -32,9 +37,10 @@ namespace ClinicDatabaseImplement
             }
         }
 
-        public string GetConnectionString()
+        ~ClinicDatabase()
         {
-            return connectionString;
+            if (npgsqlConnection != null)
+                npgsqlConnection.Close();
         }
     }
 }
