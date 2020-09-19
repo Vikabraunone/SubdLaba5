@@ -1,11 +1,10 @@
 ﻿using ClinicBisinessLogic.BindingModels;
+using ClinicBisinessLogic.Enums;
 using ClinicBisinessLogic.Interfaces;
 using ClinicBisinessLogic.ViewModels;
-using ClinicDatabaseImplement.Models;
 using Npgsql;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ClinicDatabaseImplement.Implements
 {
@@ -13,38 +12,25 @@ namespace ClinicDatabaseImplement.Implements
     {
         private readonly ClinicDatabase source;
 
-        public static string connStr;
+        private int firstId, minValue = 400; // первая запись текущей страницы в бд
+
+        private int endId = 405; // последняя запись текущей страницы в бд
 
         public SpecialistServiceLogic()
         {
             source = ClinicDatabase.GetInstance();
-            connStr = source.GetConnectionString();
         }
 
         public void Create(SpecialistServiceBindingModel model)
         {
             try
             {
-                using (var conn = new NpgsqlConnection(connStr))
+                using (var command = new NpgsqlCommand("INSERT INTO specialist_service(specialist_id, service_id)" +
+                    "VALUES (@specialistId, @serviceId)", source.npgsqlConnection))
                 {
-                    conn.Open();
-                    using (var command = new NpgsqlCommand("SELECT * FROM specialist_service WHERE specialist_id=@specialistId AND service_id=@serviceId", conn))
-                    {
-                        command.Parameters.AddWithValue("specialistId", model.SpecialistId);
-                        command.Parameters.AddWithValue("serviceId", model.ServiceId);
-                        if (command.ExecuteNonQuery() > 0)
-                            throw new Exception("Этот специалист уже оказывает такую услугу");
-                    }
-                }
-                using (var conn = new NpgsqlConnection(connStr))
-                {
-                    conn.Open();
-                    using (var command = new NpgsqlCommand("INSERT INTO specialist_service (specialist_id, service_id) VALUES (@specialistId, @serviceId)", conn))
-                    {
-                        command.Parameters.AddWithValue("specialistId", model.SpecialistId);
-                        command.Parameters.AddWithValue("serviceId", model.ServiceId);
-                        command.ExecuteNonQuery();
-                    }
+                    command.Parameters.AddWithValue("specialistId", model.SpecialistId);
+                    command.Parameters.AddWithValue("serviceId", model.ServiceId);
+                    command.ExecuteNonQuery();
                 }
             }
             catch (Exception)
@@ -57,15 +43,11 @@ namespace ClinicDatabaseImplement.Implements
         {
             try
             {
-                using (var conn = new NpgsqlConnection(connStr))
+                using (var command = new NpgsqlCommand("DELETE FROM specialist_service WHERE specialist_id=@specialistId AND service_id=@serviceId", source.npgsqlConnection))
                 {
-                    conn.Open();
-                    using (var command = new NpgsqlCommand("DELETE FROM specialist_service WHERE specialist_id=@specialistId AND service_id=@serviceId", conn))
-                    {
-                        command.Parameters.AddWithValue("specialistId", model.SpecialistId);
-                        command.Parameters.AddWithValue("serviceId", model.ServiceId);
-                        command.ExecuteNonQuery();
-                    }
+                    command.Parameters.AddWithValue("specialistId", model.SpecialistId);
+                    command.Parameters.AddWithValue("serviceId", model.ServiceId);
+                    command.ExecuteNonQuery();
                 }
             }
             catch (Exception)
@@ -76,126 +58,113 @@ namespace ClinicDatabaseImplement.Implements
 
         public List<SpecialistServiceViewModel> Read(SpecialistServiceBindingModel model)
         {
-            List<SpecialistServiceViewModel> result = new List<SpecialistServiceViewModel>();
-
-            // считываем id областей, которые привязаны к данной клинике
-            var clinicField = new List<ClinicField>();
-            using (var conn = new NpgsqlConnection(connStr))
+            List<SpecialistServiceViewModel> list = new List<SpecialistServiceViewModel>();
+            using (var command = new NpgsqlCommand("select service.id, specialist.id, service.name, specialist.lastname, " +
+                "specialist.firstname, specialist.middlename from service " +
+                "join specialist_service on specialist_service.service_id = service.id " +
+                "join specialist on specialist_service.specialist_id = specialist.id;", source.npgsqlConnection))
             {
-                conn.Open();
-                using (var command = new NpgsqlCommand($"select * from clinic_field WHERE clinic_id = {model.ClinicId}", conn))
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                    list.Add(new SpecialistServiceViewModel
+                    {
+                        ServiceId = reader.GetInt32(0),
+                        SpecialistId = reader.GetInt32(1),
+                        ServiceName = reader.GetString(2),
+                        Lastname = reader.GetString(3),
+                        Firstname = reader.GetString(4),
+                        Middlename = reader.GetString(5)
+                    });
+                reader.Close();
+            }
+            return list;
+        }
+
+        public List<SpecialistServiceViewModel> Read(Page page)
+        {
+            List<SpecialistServiceViewModel> list = new List<SpecialistServiceViewModel>();
+            if (page == Page.Current)
+            {
+                using (var command = new NpgsqlCommand($"select service.id, specialist.id, service.name, specialist.lastname, " +
+                    $"specialist.firstname, specialist.middlename from service " +
+                    $"join specialist_service on specialist_service.service_id = service.id " +
+                    $"join specialist on specialist_service.specialist_id = specialist.id " +
+                    $"where service.id >= {firstId} order by service.id asc limit 5;", source.npgsqlConnection))
+                using (var reader = command.ExecuteReader())
                 {
-                    var reader = command.ExecuteReader();
-                    while (reader.Read())
-                        clinicField.Add(new ClinicField
-                        {
-                            FieldId = reader.GetInt32(1)
-                        });
+                    if (reader.HasRows)
+                        while (reader.Read())
+                            list.Add(new SpecialistServiceViewModel
+                            {
+                                ServiceId = reader.GetInt32(0),
+                                SpecialistId = reader.GetInt32(1),
+                                ServiceName = reader.GetString(2),
+                                Lastname = reader.GetString(3),
+                                Firstname = reader.GetString(4),
+                                Middlename = reader.GetString(5)
+                            });
                 }
             }
-
-            // считываем все услуги
-            var services = new List<Service>();
-            using (var conn = new NpgsqlConnection(connStr))
+            else if (page == Page.Next)
             {
-                conn.Open();
-                using (var command = new NpgsqlCommand("select * from service", conn))
+                using (var command = new NpgsqlCommand($"select service.id, specialist.id, service.name, specialist.lastname, " +
+                    $"specialist.firstname, specialist.middlename from service " +
+                    $"join specialist_service on specialist_service.service_id = service.id " +
+                    $"join specialist on specialist_service.specialist_id = specialist.id " +
+                    $"where service.id > {endId} order by service.id asc limit 5;", source.npgsqlConnection))
                 {
-                    var reader = command.ExecuteReader();
-                    while (reader.Read())
-                        services.Add(new Service
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
                         {
-                            Id = reader.GetInt32(0),
-                            FieldId = reader.GetInt32(1),
-                            Name = reader.GetString(2),
-                            Price = reader.GetInt32(3)
-                        });
+                            while (reader.Read())
+                                list.Add(new SpecialistServiceViewModel
+                                {
+                                    ServiceId = reader.GetInt32(0),
+                                    SpecialistId = reader.GetInt32(1),
+                                    ServiceName = reader.GetString(2),
+                                    Lastname = reader.GetString(3),
+                                    Firstname = reader.GetString(4),
+                                    Middlename = reader.GetString(5)
+                                });
+                            firstId = list[0].ServiceId;
+                            endId = list[list.Count - 1].ServiceId;
+                        }
+                    }
                 }
             }
-
-            // считываем таблицу соответствия специалиста к услугам
-            var specialistService = new List<SpecialistService>();
-            using (var conn = new NpgsqlConnection(connStr))
+            else if (page == Page.Last)
             {
-                conn.Open();
-                using (var command = new NpgsqlCommand("select * from specialist_service", conn))
+                if (firstId > minValue)
                 {
-                    var reader = command.ExecuteReader();
-                    while (reader.Read())
-                        specialistService.Add(new SpecialistService
+                    using (var command = new NpgsqlCommand($"select service.id, specialist.id, service.name, specialist.lastname, " +
+                    $"specialist.firstname, specialist.middlename from service " +
+                    $"join specialist_service on specialist_service.service_id = service.id " +
+                    $"join specialist on specialist_service.specialist_id = specialist.id " +
+                    $"where service.id < {firstId} order by service.id desc limit 5;", source.npgsqlConnection))
+                    {
+                        using (var reader = command.ExecuteReader())
                         {
-                            SpecialistId = reader.GetInt32(0),
-                            ServiceId = reader.GetInt32(1)
-                        });
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                    list.Insert(0, (new SpecialistServiceViewModel
+                                    {
+                                        ServiceId = reader.GetInt32(0),
+                                        SpecialistId = reader.GetInt32(1),
+                                        ServiceName = reader.GetString(2),
+                                        Lastname = reader.GetString(3),
+                                        Firstname = reader.GetString(4),
+                                        Middlename = reader.GetString(5)
+                                    }));
+                                firstId = list[0].ServiceId;
+                                endId = list[list.Count - 1].ServiceId;
+                            }
+                        }
+                    }
                 }
             }
-
-            // считываем всех специалистов
-            var specialists = new List<Specialist>();
-            using (var conn = new NpgsqlConnection(connStr))
-            {
-                conn.Open();
-                using (var command = new NpgsqlCommand("SELECT * FROM specialist", conn))
-                {
-                    var reader = command.ExecuteReader();
-                    while (reader.Read())
-                        specialists.Add(new Specialist
-                        {
-                            Id = reader.GetInt32(0),
-                            Lastname = reader.GetString(1),
-                            Firstname = reader.GetString(2),
-                            Middlename = reader.GetString(3),
-                        });
-                }
-            }
-
-            // выбираем услуги из областей данной клиники
-            var joinFieldOnService = (from cf in clinicField
-                                      join s in services
-                                      on cf.FieldId equals s.FieldId
-                                      select new
-                                      {
-                                          ServiceId = s.Id,
-                                          ServiceName = s.Name
-                                      })
-                                      .Distinct();
-
-            // соединяем id специалистов и услуги
-            var joinServiceOnSpecialistService = from fs in joinFieldOnService
-                                                 join ss in specialistService
-                                                 on fs.ServiceId equals ss.ServiceId
-                                                 select new
-                                                 {
-                                                     ServiceId = ss.ServiceId,
-                                                     SpecialistId = ss.SpecialistId,
-                                                     ServiceName = fs.ServiceName
-                                                 };
-
-            // соответствие специалиста к оказываемой им услуге
-            result = ((from sss in joinServiceOnSpecialistService
-                       join s in specialists
-                       on sss.SpecialistId equals s.Id
-                       select new
-                       {
-                           ServiceId = sss.ServiceId,
-                           SpecialistId = sss.SpecialistId,
-                           ServiceName = sss.ServiceName,
-                           Lastname = s.Lastname,
-                           Firstname = s.Firstname,
-                           Middlename = s.Middlename
-                       })
-                       .Distinct())
-                       .Select(x => new SpecialistServiceViewModel
-                       {
-                           ServiceId = x.ServiceId,
-                           SpecialistId = x.SpecialistId,
-                           ServiceName = x.ServiceName,
-                           Lastname = x.Lastname,
-                           Firstname = x.Firstname,
-                           Middlename = x.Middlename
-                       })
-                       .ToList();
-            return result;
+            return list;
         }
     }
 }

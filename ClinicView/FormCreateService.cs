@@ -26,7 +26,7 @@ namespace ClinicView
 
         private void FormCreateService_Load(object sender, EventArgs e)
         {
-            List<FieldViewModel> list = fieldLogic.Read(new FieldBindingModel { ClinicId = Program.ClinicId });
+            List<FieldViewModel> list = fieldLogic.Read(null);
             if (list != null)
             {
                 comboBox.DisplayMember = "Name";

@@ -29,7 +29,7 @@ namespace ClinicView
             {
                 if (id.HasValue)
                 {
-                    var view = logic.Read(new SpecialistBindingModel { Id = id.Value, ClinicId = Program.ClinicId })?[0];
+                    var view = logic.Read(new SpecialistBindingModel { Id = id.Value });
                     if (view != null)
                     {
                         textBoxLastName.Text = view.Lastname;

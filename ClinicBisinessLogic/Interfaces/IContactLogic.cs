@@ -6,9 +6,7 @@ namespace ClinicBisinessLogic.Interfaces
 {
     public interface IContactLogic
     {
-        List<ContactViewModel> Read(ContactBindingModel model);
-
-        List<ContactBindingModel> ReadAllId();
+        List<ContactViewModel> Read();
 
         void Create(ContactBindingModel model);
 

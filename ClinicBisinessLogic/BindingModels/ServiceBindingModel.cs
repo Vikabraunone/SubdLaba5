@@ -4,8 +4,6 @@
     {
         public int? Id { get; set; }
 
-        public int ClinicId { get; set; }
-
         public int FieldId { get; set; }
 
         public string ServiceName { get; set; }

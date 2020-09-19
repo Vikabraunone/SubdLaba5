@@ -27,16 +27,13 @@ namespace ClinicView
         {
             try
             {
-                var list = mainLogic.Read(Program.ClinicId);
+                var list = mainLogic.Read();
                 if (list != null)
                 {
                     dataGridView.DataSource = list;
+                    dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
                     dataGridView.Columns[0].Width = 200;
-                    dataGridView.Columns[1].Width = 200;
-                    dataGridView.Columns[2].Width = 200;
-                    dataGridView.Columns[3].Width = 200;
-                    dataGridView.Columns[4].Width = 150;
-                    dataGridView.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    dataGridView.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
                 }
             }
             catch (Exception ex)
@@ -80,6 +77,11 @@ namespace ClinicView
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             DialogResult = DialogResult.OK;
+        }
+
+        private void обновитьСписокToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadData();
         }
     }
 }

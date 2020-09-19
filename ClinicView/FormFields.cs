@@ -28,7 +28,7 @@ namespace ClinicView
         {
             try
             {
-                var list = logic.Read(new FieldBindingModel { ClinicId = Program.ClinicId });
+                var list = logic.Read(null);
                 if (list != null)
                 {
                     dataGridView.DataSource = list;

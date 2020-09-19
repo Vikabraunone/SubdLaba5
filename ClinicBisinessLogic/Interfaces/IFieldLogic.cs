@@ -13,7 +13,5 @@ namespace ClinicBisinessLogic.Interfaces
         void Delete(FieldBindingModel model);
 
         List<FieldViewModel> Read(FieldBindingModel model);
-
-        List<FieldBindingModel> ReadAllId();
     }
 }

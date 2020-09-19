@@ -26,12 +26,12 @@ namespace ClinicView
                 MessageBox.Show("Впишите номер телефона", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (!long.TryParse(textBoxTelephone.Text, out long result))
+            if (!long.TryParse(textBoxTelephone.Text, out long telephone))
             {
                 MessageBox.Show("Неправильный номер телефона", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            logic.Create(new ContactBindingModel { ClinicId = Program.ClinicId, Telephone = result });
+            logic.Create(new ContactBindingModel { Telephone = telephone });
             MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
             DialogResult = DialogResult.OK;
             Close();

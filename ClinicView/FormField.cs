@@ -29,7 +29,7 @@ namespace ClinicView
             {
                 try
                 {
-                    var view = logic.Read(new FieldBindingModel { Id = id.Value, ClinicId = Program.ClinicId })?[0];
+                    var view = logic.Read(new FieldBindingModel { Id = id.Value })?[0];
                     if (view != null)
                         textBoxName.Text = view.Name;
                 }
@@ -53,14 +53,12 @@ namespace ClinicView
                     logic.Update(new FieldBindingModel
                     {
                         Id = id.Value,
-                        Name = textBoxName.Text,
-                        ClinicId = Program.ClinicId
+                        Name = textBoxName.Text
                     });
                 else
                     logic.Create(new FieldBindingModel
                     {
-                        Name = textBoxName.Text,
-                        ClinicId = Program.ClinicId
+                        Name = textBoxName.Text
                     });
                 MessageBox.Show("Сохранение прошло успешно", "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 DialogResult = DialogResult.OK;

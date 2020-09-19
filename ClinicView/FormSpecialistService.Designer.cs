@@ -72,7 +72,7 @@
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Location = new System.Drawing.Point(250, 107);
+            this.buttonCancel.Location = new System.Drawing.Point(242, 113);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(112, 33);
             this.buttonCancel.TabIndex = 28;
@@ -82,7 +82,7 @@
             // 
             // buttonSave
             // 
-            this.buttonSave.Location = new System.Drawing.Point(132, 107);
+            this.buttonSave.Location = new System.Drawing.Point(124, 113);
             this.buttonSave.Name = "buttonSave";
             this.buttonSave.Size = new System.Drawing.Size(112, 33);
             this.buttonSave.TabIndex = 27;
@@ -94,7 +94,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(433, 164);
+            this.ClientSize = new System.Drawing.Size(400, 158);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonSave);
             this.Controls.Add(this.labelSpecialist);

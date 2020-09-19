@@ -27,7 +27,7 @@ namespace ClinicView
         {
             try
             {
-                var view = logic.Read(new ServiceBindingModel { Id = id })?[0];
+                var view = logic.Read(new ServiceBindingModel { Id = id });
                 if (view != null)
                 {
                     textBoxName.Text = view.ServiceName;

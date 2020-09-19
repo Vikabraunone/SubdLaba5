@@ -1,4 +1,5 @@
 ﻿using ClinicBisinessLogic.BindingModels;
+using ClinicBisinessLogic.Enums;
 using ClinicBisinessLogic.Interfaces;
 using System;
 using System.Windows.Forms;
@@ -21,34 +22,14 @@ namespace ClinicView
 
         private void FormServices_Load(object sender, EventArgs e)
         {
-            LoadData();
-        }
-
-        private void LoadData()
-        {
-            try
-            {
-                var list = logic.Read(new ServiceBindingModel { ClinicId = Program.ClinicId });
-                if (list != null)
-                {
-                    dataGridView.DataSource = list;
-                    dataGridView.Columns[0].Visible = false;
-                    dataGridView.Columns[1].Width = 200;
-                    dataGridView.Columns[2].Width = 300;
-                    dataGridView.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            GetPage(Page.Current);
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             var form = Container.Resolve<FormCreateService>();
             if (form.ShowDialog() == DialogResult.OK)
-                LoadData();
+                GetPage(Page.Current);
         }
 
         private void buttonUpdate_Click(object sender, EventArgs e)
@@ -58,7 +39,7 @@ namespace ClinicView
                 var form = Container.Resolve<FormUpdateService>();
                 form.Id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
                 if (form.ShowDialog() == DialogResult.OK)
-                    LoadData();
+                    GetPage(Page.Current);
             }
         }
 
@@ -78,14 +59,48 @@ namespace ClinicView
                     {
                         MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                    LoadData();
+                    GetPage(Page.Current);
                 }
             }
         }
 
         private void buttonRef_Click(object sender, EventArgs e)
         {
-            LoadData();
+            GetPage(Page.Current);
+        }
+
+        private void buttonBackward_Click(object sender, EventArgs e)
+        {
+            GetPage(Page.Last);
+        }
+
+        private void buttonNext_Click(object sender, EventArgs e)
+        {
+            GetPage(Page.Next);
+        }
+
+        private void GetPage(Page page)
+        {
+            try
+            {
+                var list = logic.Read(page);
+                if (list.Count != 0)
+                {
+                    dataGridView.DataSource = list;
+                    int totalRowHeight = dataGridView.ColumnHeadersHeight;
+                    foreach (DataGridViewRow row in dataGridView.Rows)
+                        totalRowHeight += row.Height;
+                    dataGridView.Height = totalRowHeight;
+                    dataGridView.Columns[0].Visible = false;
+                    dataGridView.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                    dataGridView.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    dataGridView.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

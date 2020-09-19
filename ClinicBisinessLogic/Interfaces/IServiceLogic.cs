@@ -1,4 +1,5 @@
 ﻿using ClinicBisinessLogic.BindingModels;
+using ClinicBisinessLogic.Enums;
 using ClinicBisinessLogic.ViewModels;
 using System.Collections.Generic;
 
@@ -12,8 +13,8 @@ namespace ClinicBisinessLogic.Interfaces
 
         void Delete(ServiceBindingModel model);
 
-        List<ServiceViewModel> Read(ServiceBindingModel model);
+        ServiceViewModel Read(ServiceBindingModel model);
 
-        List<ServiceBindingModel> ReadAllId();
+        List<ServiceViewModel> Read(Page page);
     }
 }

@@ -28,7 +28,7 @@ namespace ClinicView
         {
             try
             {
-                var list = logic.Read(new ContactBindingModel { ClinicId = Program.ClinicId });
+                var list = logic.Read();
                 if (list != null)
                 {
                     dataGridView.DataSource = list;
@@ -57,10 +57,9 @@ namespace ClinicView
                     MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     int id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
-                    int clinicId = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[1].Value);
                     try
                     {
-                        logic.Delete(new ContactBindingModel { Id = id, ClinicId = clinicId });
+                        logic.Delete(new ContactBindingModel { Id = id });
                     }
                     catch (Exception ex)
                     {

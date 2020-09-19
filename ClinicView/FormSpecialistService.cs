@@ -1,4 +1,5 @@
 ﻿using ClinicBisinessLogic.BindingModels;
+using ClinicBisinessLogic.Enums;
 using ClinicBisinessLogic.Interfaces;
 using ClinicBisinessLogic.ViewModels;
 using System;
@@ -30,7 +31,7 @@ namespace ClinicView
 
         private void FormSpecialistService_Load(object sender, EventArgs e)
         {
-            List<ServiceViewModel> services = serviceLogic.Read(new ServiceBindingModel { ClinicId = Program.ClinicId });
+            List<ServiceViewModel> services = serviceLogic.Read(Page.All);
             if (services != null)
             {
                 comboBoxService.DisplayMember = "ServiceName";
@@ -38,11 +39,10 @@ namespace ClinicView
                 comboBoxService.DataSource = services;
                 comboBoxService.SelectedItem = null;
             }
-
-            List<SpecialistViewModel> specialists = specialistLogic.Read(new SpecialistBindingModel { ClinicId = Program.ClinicId });
+            List<SpecialistViewModel> specialists = specialistLogic.Read(Page.All);
             if (specialists != null)
             {
-                comboBoxSpecialist.DisplayMember = "Id";
+                comboBoxSpecialist.DisplayMember = "FirstName";
                 comboBoxSpecialist.ValueMember = "Id";
                 comboBoxSpecialist.DataSource = specialists;
                 comboBoxSpecialist.SelectedItem = null;

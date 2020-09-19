@@ -5,7 +5,5 @@
         public int ServiceId { get; set; }
 
         public int SpecialistId { get; set; }
-
-        public int ClinicId { get; set; }
     }
 }

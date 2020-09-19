@@ -5,6 +5,6 @@ namespace ClinicBisinessLogic.Interfaces
 {
     public interface IMainLogic
     {
-        List<MainViewModel> Read(int clinicId);
+        List<MainViewModel> Read();
     }
 }

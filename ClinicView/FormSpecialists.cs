@@ -1,4 +1,5 @@
 ﻿using ClinicBisinessLogic.BindingModels;
+using ClinicBisinessLogic.Enums;
 using ClinicBisinessLogic.Interfaces;
 using System;
 using System.Windows.Forms;
@@ -21,37 +22,14 @@ namespace ClinicView
 
         private void FormSpecialists_Load(object sender, EventArgs e)
         {
-            LoadData();
-        }
-
-        private void LoadData()
-        {
-            try
-            {
-                var list = logic.Read(new SpecialistBindingModel { ClinicId = Program.ClinicId });
-                if (list != null)
-                {
-                    dataGridView.DataSource = list;
-                    dataGridView.Columns[0].Width = 100;
-                    dataGridView.Columns[1].Width = 150;
-                    dataGridView.Columns[2].Width = 150;
-                    dataGridView.Columns[3].Width = 150;
-                    dataGridView.Columns[4].Width = 100;
-                    dataGridView.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                    dataGridView.Columns[6].Visible = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            GetPage(Page.Current);
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             var form = Container.Resolve<FormSpecialist>();
             if (form.ShowDialog() == DialogResult.OK)
-                LoadData();
+                GetPage(Page.Current);
         }
 
         private void buttonUpdate_Click(object sender, EventArgs e)
@@ -61,7 +39,7 @@ namespace ClinicView
                 var form = Container.Resolve<FormSpecialist>();
                 form.Id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
                 if (form.ShowDialog() == DialogResult.OK)
-                    LoadData();
+                    GetPage(Page.Current);
             }
         }
 
@@ -75,25 +53,62 @@ namespace ClinicView
                     int id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
                     try
                     {
-                        logic.Delete(new SpecialistBindingModel { Id = id, ClinicId = Program.ClinicId });
+                        logic.Delete(new SpecialistBindingModel { Id = id });
+                        GetPage(Page.Current);
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                    LoadData();
                 }
             }
         }
 
         private void buttonRef_Click(object sender, EventArgs e)
         {
-            LoadData();
+            GetPage(Page.Current);
         }
 
         private void FormSpecialists_FormClosing(object sender, FormClosingEventArgs e)
         {
             DialogResult = DialogResult.OK;
+        }
+
+        private void buttonBackward_Click(object sender, EventArgs e)
+        {
+            GetPage(Page.Last);
+        }
+
+        private void buttonNext_Click(object sender, EventArgs e)
+        {
+            GetPage(Page.Next);
+        }
+
+        private void GetPage(Page page)
+        {
+            try
+            {
+                var list = logic.Read(page);
+                if (list.Count != 0)
+                {
+                    dataGridView.DataSource = list;
+                    int totalRowHeight = dataGridView.ColumnHeadersHeight;
+                    foreach (DataGridViewRow row in dataGridView.Rows)
+                        totalRowHeight += row.Height;
+                    dataGridView.Height = totalRowHeight;
+                    dataGridView.Columns[0].Visible = false;
+                    dataGridView.Columns[1].Width = 150;
+                    dataGridView.Columns[2].Width = 150;
+                    dataGridView.Columns[3].Width = 150;
+                    dataGridView.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                    dataGridView.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    dataGridView.Columns[6].Visible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

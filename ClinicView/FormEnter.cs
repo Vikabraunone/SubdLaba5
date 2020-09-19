@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ClinicDatabaseImplement;
+using System;
 using System.Windows.Forms;
 using Unity;
 
@@ -18,10 +19,9 @@ namespace ClinicView
         {
             try
             {
-                Program.ClinicDatabase.ConnectToDatabase(textBoxHost.Text, textBoxPort.Text, textBoxUser.Text,
-                    textBoxPassword.Text, textBoxBD.Text);
+                ClinicDatabase.OpenСonnection(textBoxHost.Text, textBoxPort.Text, textBoxPassword.Text, textBoxBD.Text);
                 this.Visible = false;
-                var form = Container.Resolve<FormChooseClinic>();
+                var form = Container.Resolve<FormMain>();
                 form.ShowDialog();
                 Close();
             }

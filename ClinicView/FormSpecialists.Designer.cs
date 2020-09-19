@@ -33,6 +33,8 @@
             this.buttonUpdate = new System.Windows.Forms.Button();
             this.buttonAdd = new System.Windows.Forms.Button();
             this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.buttonBackward = new System.Windows.Forms.Button();
+            this.buttonNext = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -82,20 +84,48 @@
             // 
             // dataGridView
             // 
+            this.dataGridView.AllowUserToAddRows = false;
+            this.dataGridView.AllowUserToDeleteRows = false;
             this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Location = new System.Drawing.Point(12, 12);
             this.dataGridView.Name = "dataGridView";
-            this.dataGridView.Size = new System.Drawing.Size(908, 238);
+            this.dataGridView.Size = new System.Drawing.Size(908, 209);
             this.dataGridView.TabIndex = 21;
+            // 
+            // buttonBackward
+            // 
+            this.buttonBackward.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonBackward.ForeColor = System.Drawing.Color.Black;
+            this.buttonBackward.Location = new System.Drawing.Point(419, 245);
+            this.buttonBackward.Name = "buttonBackward";
+            this.buttonBackward.Size = new System.Drawing.Size(40, 40);
+            this.buttonBackward.TabIndex = 26;
+            this.buttonBackward.Text = "<";
+            this.buttonBackward.UseVisualStyleBackColor = true;
+            this.buttonBackward.Click += new System.EventHandler(this.buttonBackward_Click);
+            // 
+            // buttonNext
+            // 
+            this.buttonNext.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.buttonNext.ForeColor = System.Drawing.Color.Black;
+            this.buttonNext.Location = new System.Drawing.Point(552, 245);
+            this.buttonNext.Name = "buttonNext";
+            this.buttonNext.Size = new System.Drawing.Size(40, 40);
+            this.buttonNext.TabIndex = 27;
+            this.buttonNext.Text = ">";
+            this.buttonNext.UseVisualStyleBackColor = true;
+            this.buttonNext.Click += new System.EventHandler(this.buttonNext_Click);
             // 
             // FormSpecialists
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1044, 258);
+            this.ClientSize = new System.Drawing.Size(1044, 324);
+            this.Controls.Add(this.buttonNext);
+            this.Controls.Add(this.buttonBackward);
             this.Controls.Add(this.buttonRef);
             this.Controls.Add(this.buttonDelete);
             this.Controls.Add(this.buttonUpdate);
@@ -118,5 +148,7 @@
         private System.Windows.Forms.Button buttonUpdate;
         private System.Windows.Forms.Button buttonAdd;
         private System.Windows.Forms.DataGridView dataGridView;
+        private System.Windows.Forms.Button buttonBackward;
+        private System.Windows.Forms.Button buttonNext;
     }
 }
