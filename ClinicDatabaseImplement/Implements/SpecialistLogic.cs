@@ -1,5 +1,4 @@
 ﻿using ClinicBisinessLogic.BindingModels;
-using ClinicBisinessLogic.Enums;
 using ClinicBisinessLogic.Interfaces;
 using ClinicBisinessLogic.ViewModels;
 using Npgsql;
@@ -11,10 +10,6 @@ namespace ClinicDatabaseImplement.Implements
     public class SpecialistLogic : ISpecialistLogic
     {
         private readonly ClinicDatabase source;
-
-        private int firstId, minValue = 500; // первая запись текущей страницы в бд
-
-        private int endId = 505; // последняя запись текущей страницы в бд
 
         public SpecialistLogic()
         {
@@ -113,84 +108,12 @@ namespace ClinicDatabaseImplement.Implements
             return specialist;
         }
 
-        public List<SpecialistViewModel> Read(Page page)
+        public List<SpecialistViewModel> Read(int? limit, int? offset)
         {
             List<SpecialistViewModel> list = new List<SpecialistViewModel>();
-            if (page == Page.Current)
+            if (limit == null || offset == null)
             {
-                using (var command = new NpgsqlCommand($"select * from specialist where " +
-                       $"id >= {firstId} order by id asc limit 5;", source.npgsqlConnection))
-                using (var reader = command.ExecuteReader())
-                {
-                    if (reader.HasRows)
-                        while (reader.Read())
-                            list.Add(new SpecialistViewModel
-                            {
-                                Id = reader.GetInt32(0),
-                                Lastname = reader.GetString(1),
-                                Firstname = reader.GetString(2),
-                                Middlename = reader.GetString(3),
-                                ExperienceWork = reader.GetInt32(4),
-                                Qualification = reader.GetString(5)
-                            });
-                }
-            }
-            else if (page == Page.Next)
-            {
-                using (var command = new NpgsqlCommand($"select * from specialist where " +
-                    $"id > {endId} order by id asc limit 5;", source.npgsqlConnection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        if (reader.HasRows)
-                        {
-                            while (reader.Read())
-                                list.Add(new SpecialistViewModel
-                                {
-                                    Id = reader.GetInt32(0),
-                                    Lastname = reader.GetString(1),
-                                    Firstname = reader.GetString(2),
-                                    Middlename = reader.GetString(3),
-                                    ExperienceWork = reader.GetInt32(4),
-                                    Qualification = reader.GetString(5)
-                                });
-                            firstId = list[0].Id.Value;
-                            endId = list[list.Count - 1].Id.Value;
-                        }
-                    }
-                }
-            }
-            else if (page == Page.Last)
-            {
-                if (firstId > minValue)
-                {
-                    using (var command = new NpgsqlCommand($"select * from specialist where " +
-                        $"id < {firstId} order by id desc limit 5;", source.npgsqlConnection))
-                    {
-                        using (var reader = command.ExecuteReader())
-                        {
-                            if (reader.HasRows)
-                            {
-                                while (reader.Read())
-                                    list.Insert(0, (new SpecialistViewModel
-                                    {
-                                        Id = reader.GetInt32(0),
-                                        Lastname = reader.GetString(1),
-                                        Firstname = reader.GetString(2),
-                                        Middlename = reader.GetString(3),
-                                        ExperienceWork = reader.GetInt32(4),
-                                        Qualification = reader.GetString(5)
-                                    }));
-                                firstId = list[0].Id.Value;
-                                endId = list[list.Count - 1].Id.Value;
-                            }
-                        }
-                    }
-                }
-            }
-            else if (page == Page.All)
-            {
-                using (var command = new NpgsqlCommand($"select id, lastname, firstname, middlename from specialist;", source.npgsqlConnection))
+                using (var command = new NpgsqlCommand("select id, lastname, firstname, middlename from specialist;", source.npgsqlConnection))
                 {
                     using (var reader = command.ExecuteReader())
                     {
@@ -200,6 +123,28 @@ namespace ClinicDatabaseImplement.Implements
                                 {
                                     Id = reader.GetInt32(0),
                                     Firstname = string.Join(" ", reader.GetString(1), reader.GetString(2), reader.GetString(3))
+                                });
+                    }
+                }
+            }
+            else
+            {
+                using (var command = new NpgsqlCommand($"select * from specialist " +
+                    $"order by lastname asc, firstname asc, middlename asc " +
+                    $"limit {limit} offset {offset};", source.npgsqlConnection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                            while (reader.Read())
+                                list.Add(new SpecialistViewModel
+                                {
+                                    Id = reader.GetInt32(0),
+                                    Lastname = reader.GetString(1),
+                                    Firstname = reader.GetString(2),
+                                    Middlename = reader.GetString(3),
+                                    ExperienceWork = reader.GetInt32(4),
+                                    Qualification = reader.GetString(5)
                                 });
                     }
                 }

@@ -1,5 +1,4 @@
 ﻿using ClinicBisinessLogic.BindingModels;
-using ClinicBisinessLogic.Enums;
 using ClinicBisinessLogic.Interfaces;
 using ClinicBisinessLogic.ViewModels;
 using Npgsql;
@@ -11,10 +10,6 @@ namespace ClinicDatabaseImplement.Implements
     public class ServiceLogic : IServiceLogic
     {
         private readonly ClinicDatabase source;
-
-        private int firstId, minValue = 400; // первая запись текущей страницы в бд
-
-        private int endId = 405; // последняя запись текущей страницы в бд
 
         public ServiceLogic()
         {
@@ -102,79 +97,10 @@ namespace ClinicDatabaseImplement.Implements
             return service;
         }
 
-        public List<ServiceViewModel> Read(Page page)
+        public List<ServiceViewModel> Read(int? limit, int? offset)
         {
             List<ServiceViewModel> list = new List<ServiceViewModel>();
-            if (page == Page.Current)
-            {
-                using (var command = new NpgsqlCommand($"select service.id, service.name, service.price, field_medicine.name " +
-                    $"from service join field_medicine on service.field_id = field_medicine.id where " +
-                       $"service.id >= {firstId} order by service.id asc limit 5;", source.npgsqlConnection))
-                using (var reader = command.ExecuteReader())
-                {
-                    if (reader.HasRows)
-                        while (reader.Read())
-                            list.Add(new ServiceViewModel
-                            {
-                                Id = reader.GetInt32(0),
-                                ServiceName = reader.GetString(1),
-                                Price = reader.GetInt32(2),
-                                FieldName = reader.GetString(3)
-                            });
-                }
-            }
-            else if (page == Page.Next)
-            {
-                using (var command = new NpgsqlCommand($"select service.id, service.name, service.price, field_medicine.name " +
-                    $"from service join field_medicine on service.field_id = field_medicine.id where " +
-                    $"service.id > {endId} order by service.id asc limit 5;", source.npgsqlConnection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        if (reader.HasRows)
-                        {
-                            while (reader.Read())
-                                list.Add(new ServiceViewModel
-                                {
-                                    Id = reader.GetInt32(0),
-                                    ServiceName = reader.GetString(1),
-                                    Price = reader.GetInt32(2),
-                                    FieldName = reader.GetString(3)
-                                });
-                            firstId = list[0].Id.Value;
-                            endId = list[list.Count - 1].Id.Value;
-                        }
-                    }
-                }
-            }
-            else if (page == Page.Last)
-            {
-                if (firstId > minValue)
-                {
-                    using (var command = new NpgsqlCommand($"select service.id, service.name, service.price, field_medicine.name " +
-                        $"from service join field_medicine on service.field_id = field_medicine.id where " +
-                        $"service.id < {firstId} order by service.id desc limit 5;", source.npgsqlConnection))
-                    {
-                        using (var reader = command.ExecuteReader())
-                        {
-                            if (reader.HasRows)
-                            {
-                                while (reader.Read())
-                                    list.Insert(0, (new ServiceViewModel
-                                    {
-                                        Id = reader.GetInt32(0),
-                                        ServiceName = reader.GetString(1),
-                                        Price = reader.GetInt32(2),
-                                        FieldName = reader.GetString(3)
-                                    }));
-                                firstId = list[0].Id.Value;
-                                endId = list[list.Count - 1].Id.Value;
-                            }
-                        }
-                    }
-                }
-            }
-            else if (page == Page.All)
+            if (limit == null || offset == null)
             {
                 using (var command = new NpgsqlCommand("select id, name from service;", source.npgsqlConnection))
                 {
@@ -186,6 +112,28 @@ namespace ClinicDatabaseImplement.Implements
                                 {
                                     Id = reader.GetInt32(0),
                                     ServiceName = reader.GetString(1)
+                                });
+                    }
+                }
+            }
+            else
+            {
+                using (var command = new NpgsqlCommand($"select service.id, service.name, service.price, field_medicine.name " +
+                    $"from service join field_medicine " +
+                    $"on service.field_id = field_medicine.id " +
+                    $"order by field_medicine.name asc, service.name asc " +
+                    $"limit {limit} offset {offset};", source.npgsqlConnection))
+                {
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                            while (reader.Read())
+                                list.Add(new ServiceViewModel
+                                {
+                                    Id = reader.GetInt32(0),
+                                    ServiceName = reader.GetString(1),
+                                    Price = reader.GetInt32(2),
+                                    FieldName = reader.GetString(3)
                                 });
                     }
                 }

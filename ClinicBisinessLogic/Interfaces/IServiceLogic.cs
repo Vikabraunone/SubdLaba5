@@ -15,6 +15,6 @@ namespace ClinicBisinessLogic.Interfaces
 
         ServiceViewModel Read(ServiceBindingModel model);
 
-        List<ServiceViewModel> Read(Page page);
+        List<ServiceViewModel> Read(int? limit, int? offset);
     }
 }

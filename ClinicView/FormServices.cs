@@ -1,5 +1,4 @@
 ﻿using ClinicBisinessLogic.BindingModels;
-using ClinicBisinessLogic.Enums;
 using ClinicBisinessLogic.Interfaces;
 using System;
 using System.Windows.Forms;
@@ -14,6 +13,10 @@ namespace ClinicView
 
         private readonly IServiceLogic logic;
 
+        private readonly int limit = 5;
+
+        private int offset = 0;
+
         public FormServices(IServiceLogic logic)
         {
             InitializeComponent();
@@ -22,14 +25,14 @@ namespace ClinicView
 
         private void FormServices_Load(object sender, EventArgs e)
         {
-            GetPage(Page.Current);
+            GetPage();
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             var form = Container.Resolve<FormCreateService>();
             if (form.ShowDialog() == DialogResult.OK)
-                GetPage(Page.Current);
+                GetPage();
         }
 
         private void buttonUpdate_Click(object sender, EventArgs e)
@@ -39,7 +42,7 @@ namespace ClinicView
                 var form = Container.Resolve<FormUpdateService>();
                 form.Id = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
                 if (form.ShowDialog() == DialogResult.OK)
-                    GetPage(Page.Current);
+                    GetPage();
             }
         }
 
@@ -59,31 +62,36 @@ namespace ClinicView
                     {
                         MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                    GetPage(Page.Current);
+                    GetPage();
                 }
             }
         }
 
         private void buttonRef_Click(object sender, EventArgs e)
         {
-            GetPage(Page.Current);
+            GetPage();
         }
 
         private void buttonBackward_Click(object sender, EventArgs e)
         {
-            GetPage(Page.Last);
+            if (offset >= limit)
+            {
+                offset -= limit;
+                GetPage();
+            }
         }
 
         private void buttonNext_Click(object sender, EventArgs e)
         {
-            GetPage(Page.Next);
+            offset += limit;
+            GetPage();
         }
 
-        private void GetPage(Page page)
+        private void GetPage()
         {
             try
             {
-                var list = logic.Read(page);
+                var list = logic.Read(limit, offset);
                 if (list.Count != 0)
                 {
                     dataGridView.DataSource = list;

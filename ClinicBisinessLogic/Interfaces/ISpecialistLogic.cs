@@ -15,6 +15,6 @@ namespace ClinicBisinessLogic.Interfaces
 
         SpecialistViewModel Read(SpecialistBindingModel model);
 
-        List<SpecialistViewModel> Read(Page page);
+        List<SpecialistViewModel> Read(int? limit, int? offset);
     }
 }

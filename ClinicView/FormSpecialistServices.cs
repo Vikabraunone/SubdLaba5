@@ -1,5 +1,4 @@
 ﻿using ClinicBisinessLogic.BindingModels;
-using ClinicBisinessLogic.Enums;
 using ClinicBisinessLogic.Interfaces;
 using System;
 using System.Windows.Forms;
@@ -14,6 +13,10 @@ namespace ClinicView
 
         private readonly ISpecialistServiceLogic logic;
 
+        private readonly int limit = 5;
+
+        private int offset = 0;
+
         public FormSpecialistServices(ISpecialistServiceLogic logic)
         {
             InitializeComponent();
@@ -22,14 +25,14 @@ namespace ClinicView
 
         private void FormSpecialistServices_Load(object sender, EventArgs e)
         {
-            GetPage(Page.Current);
+            GetPage();
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             var form = Container.Resolve<FormSpecialistService>();
             if (form.ShowDialog() == DialogResult.OK)
-                GetPage(Page.Current);
+                GetPage();
         }
 
         private void buttonDelete_Click(object sender, EventArgs e)
@@ -44,7 +47,7 @@ namespace ClinicView
                     try
                     {
                         logic.Delete(new SpecialistServiceBindingModel { ServiceId = serviceId, SpecialistId = specialistId });
-                        GetPage(Page.Current);
+                        GetPage();
                     }
                     catch (Exception ex)
                     {
@@ -56,19 +59,24 @@ namespace ClinicView
 
         private void buttonBackward_Click(object sender, EventArgs e)
         {
-            GetPage(Page.Last);
+            if (offset >= limit)
+            {
+                offset -= limit;
+                GetPage();
+            }
         }
 
         private void buttonNext_Click(object sender, EventArgs e)
         {
-            GetPage(Page.Next);
+            offset += limit;
+            GetPage();
         }
 
-        private void GetPage(Page page)
+        private void GetPage()
         {
             try
             {
-                var list = logic.Read(page);
+                var list = logic.Read(limit, offset);
                 if (list.Count != 0)
                 {
                     dataGridView.DataSource = list;

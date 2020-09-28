@@ -1,5 +1,4 @@
 ﻿using ClinicBisinessLogic.BindingModels;
-using ClinicBisinessLogic.Enums;
 using ClinicBisinessLogic.Interfaces;
 using ClinicBisinessLogic.ViewModels;
 using Npgsql;
@@ -11,10 +10,6 @@ namespace ClinicDatabaseImplement.Implements
     public class SpecialistServiceLogic : ISpecialistServiceLogic
     {
         private readonly ClinicDatabase source;
-
-        private int firstId, minValue = 400; // первая запись текущей страницы в бд
-
-        private int endId = 405; // последняя запись текущей страницы в бд
 
         public SpecialistServiceLogic()
         {
@@ -56,43 +51,22 @@ namespace ClinicDatabaseImplement.Implements
             }
         }
 
-        public List<SpecialistServiceViewModel> Read(SpecialistServiceBindingModel model)
+        public List<SpecialistServiceViewModel> Read(int? limit, int? offset)
         {
             List<SpecialistServiceViewModel> list = new List<SpecialistServiceViewModel>();
-            using (var command = new NpgsqlCommand("select service.id, specialist.id, service.name, specialist.lastname, " +
-                "specialist.firstname, specialist.middlename from service " +
-                "join specialist_service on specialist_service.service_id = service.id " +
-                "join specialist on specialist_service.specialist_id = specialist.id;", source.npgsqlConnection))
-            {
-                var reader = command.ExecuteReader();
-                while (reader.Read())
-                    list.Add(new SpecialistServiceViewModel
-                    {
-                        ServiceId = reader.GetInt32(0),
-                        SpecialistId = reader.GetInt32(1),
-                        ServiceName = reader.GetString(2),
-                        Lastname = reader.GetString(3),
-                        Firstname = reader.GetString(4),
-                        Middlename = reader.GetString(5)
-                    });
-                reader.Close();
-            }
-            return list;
-        }
-
-        public List<SpecialistServiceViewModel> Read(Page page)
-        {
-            List<SpecialistServiceViewModel> list = new List<SpecialistServiceViewModel>();
-            if (page == Page.Current)
-            {
-                using (var command = new NpgsqlCommand($"select service.id, specialist.id, service.name, specialist.lastname, " +
+            using (var command = new NpgsqlCommand($"select service.id, specialist.id, service.name, specialist.lastname, " +
                     $"specialist.firstname, specialist.middlename from service " +
-                    $"join specialist_service on specialist_service.service_id = service.id " +
-                    $"join specialist on specialist_service.specialist_id = specialist.id " +
-                    $"where service.id >= {firstId} order by service.id asc limit 5;", source.npgsqlConnection))
+                    $"join specialist_service " +
+                    $"on specialist_service.service_id = service.id " +
+                    $"join specialist " +
+                    $"on specialist_service.specialist_id = specialist.id " +
+                    $"order by service.name " +
+                    $"limit {limit} offset {offset};", source.npgsqlConnection))
+            {
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.HasRows)
+                    {
                         while (reader.Read())
                             list.Add(new SpecialistServiceViewModel
                             {
@@ -103,64 +77,6 @@ namespace ClinicDatabaseImplement.Implements
                                 Firstname = reader.GetString(4),
                                 Middlename = reader.GetString(5)
                             });
-                }
-            }
-            else if (page == Page.Next)
-            {
-                using (var command = new NpgsqlCommand($"select service.id, specialist.id, service.name, specialist.lastname, " +
-                    $"specialist.firstname, specialist.middlename from service " +
-                    $"join specialist_service on specialist_service.service_id = service.id " +
-                    $"join specialist on specialist_service.specialist_id = specialist.id " +
-                    $"where service.id > {endId} order by service.id asc limit 5;", source.npgsqlConnection))
-                {
-                    using (var reader = command.ExecuteReader())
-                    {
-                        if (reader.HasRows)
-                        {
-                            while (reader.Read())
-                                list.Add(new SpecialistServiceViewModel
-                                {
-                                    ServiceId = reader.GetInt32(0),
-                                    SpecialistId = reader.GetInt32(1),
-                                    ServiceName = reader.GetString(2),
-                                    Lastname = reader.GetString(3),
-                                    Firstname = reader.GetString(4),
-                                    Middlename = reader.GetString(5)
-                                });
-                            firstId = list[0].ServiceId;
-                            endId = list[list.Count - 1].ServiceId;
-                        }
-                    }
-                }
-            }
-            else if (page == Page.Last)
-            {
-                if (firstId > minValue)
-                {
-                    using (var command = new NpgsqlCommand($"select service.id, specialist.id, service.name, specialist.lastname, " +
-                    $"specialist.firstname, specialist.middlename from service " +
-                    $"join specialist_service on specialist_service.service_id = service.id " +
-                    $"join specialist on specialist_service.specialist_id = specialist.id " +
-                    $"where service.id < {firstId} order by service.id desc limit 5;", source.npgsqlConnection))
-                    {
-                        using (var reader = command.ExecuteReader())
-                        {
-                            if (reader.HasRows)
-                            {
-                                while (reader.Read())
-                                    list.Insert(0, (new SpecialistServiceViewModel
-                                    {
-                                        ServiceId = reader.GetInt32(0),
-                                        SpecialistId = reader.GetInt32(1),
-                                        ServiceName = reader.GetString(2),
-                                        Lastname = reader.GetString(3),
-                                        Firstname = reader.GetString(4),
-                                        Middlename = reader.GetString(5)
-                                    }));
-                                firstId = list[0].ServiceId;
-                                endId = list[list.Count - 1].ServiceId;
-                            }
-                        }
                     }
                 }
             }
